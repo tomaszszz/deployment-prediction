@@ -19,7 +19,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
-      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      CLUSTER_ID: someid
 
   financial-data:
     build: ../financial-data
@@ -28,12 +28,15 @@ services:
       - kafka
     environment:
       BOOTSTRAP_SERVERS: kafka:9092
+      INPUT_FILE_PATH: app/resources/financial_data.csv
+    volumes:
+      - ./financial_data.csv:/app/resources/financial_data.csv
     ports:
       - "8081:8081"
 #
-#  service2:
-#    build: ./service2
-#    container_name: service2
+#  weather-data:
+#    build: ./weather-data
+#    container_name: weather-data
 #    depends_on:
 #      - kafka
 #    environment:
