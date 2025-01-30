@@ -26,31 +26,37 @@ services:
     container_name: financial-data
     depends_on:
       - kafka
+      - consumer-app
     environment:
       BOOTSTRAP_SERVERS: kafka:9092
       INPUT_FILE_PATH: app/resources/financial_data.csv
+      KAFKA_TOPIC_NAME: finance-topic
     volumes:
       - ./financial_data.csv:/app/resources/financial_data.csv
     ports:
       - "8081:8081"
-#
-#  weather-data:
-#    build: ./weather-data
-#    container_name: weather-data
-#    depends_on:
-#      - kafka
-#    environment:
-#      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-#    ports:
-#      - "8082:8082"
-#
-#  service3:
-#    build: ./service3
-#    container_name: service3
-#    depends_on:
-#      - kafka
-#    environment:
-#      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-#      KAFKA_TOPIC: my-topic
-#    ports:
-#      - "8083:8083"
+
+  weather-data:
+    build: ../weather-data
+    container_name: weather-data
+    depends_on:
+      - kafka
+      - consumer-app
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092
+      INPUT_FILE_PATH: app/resources/weather_data.csv
+      KAFKA_TOPIC_NAME: weather-topic
+    volumes:
+      - ./weather_data.csv:/app/resources/weather_data.csv
+    ports:
+      - "8082:8082"
+
+  consumer-app:
+    build: ../consumer-app
+    container_name: consumer-app
+    depends_on:
+      - kafka
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "8083:8083"
