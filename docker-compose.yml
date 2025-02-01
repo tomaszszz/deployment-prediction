@@ -66,3 +66,12 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     ports:
       - "8083:8083"
+
+  prediction-frontend:
+    build: ../prediction-frontend
+    container_name: prediction-frontend
+    depends_on:
+      consumer-app:
+        condition: service_healthy
+    ports:
+      - "8080:80"
