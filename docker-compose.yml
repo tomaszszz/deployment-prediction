@@ -25,8 +25,8 @@ services:
     build: ../financial-data
     container_name: financial-data
     depends_on:
-      - kafka
-      - consumer-app
+      consumer-app:
+        condition: service_healthy
     environment:
       BOOTSTRAP_SERVERS: kafka:9092
       INPUT_FILE_PATH: app/resources/financial_data.csv
@@ -40,8 +40,8 @@ services:
     build: ../weather-data
     container_name: weather-data
     depends_on:
-      - kafka
-      - consumer-app
+      consumer-app:
+        condition: service_healthy
     environment:
       BOOTSTRAP_SERVERS: kafka:9092
       INPUT_FILE_PATH: app/resources/weather_data.csv
@@ -54,6 +54,12 @@ services:
   consumer-app:
     build: ../consumer-app
     container_name: consumer-app
+    healthcheck:
+      test: "curl -f consumer-app:8083/actuator/health | grep UP || exit 1"
+      interval: 2s
+      timeout: 20s
+      retries: 5
+      start_period: 10s
     depends_on:
       - kafka
     environment:
